@@ -17,9 +17,17 @@ app.post('/todos', (req, res) => {
     todo.save().then((doc) => {
         res.send(doc);
     }, (error) => {
-        res.send(error.message);
+        res.status(400).send(error.message);
     })
 });
+
+app.get('/todos', (req, res) => {
+    const todos = Todo.find().then((results) => {
+        res.send({ results });
+    }, (error) => {
+        res.status(400).send(error);
+    });
+})
 
 app.listen(port, () => {
     console.log(`Started Listening on port ${port}`);
