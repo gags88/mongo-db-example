@@ -1,8 +1,5 @@
 // const MongoClient = require('mongodb').MongoClient;
-const {
-    MongoClient,
-    ObjectID
-} = require('mongodb');
+const {MongoClient, ObjectID} = require('mongodb');
 
 // To know _id prop
 /* const obj = new ObjectID();
