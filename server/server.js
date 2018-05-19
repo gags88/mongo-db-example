@@ -85,7 +85,22 @@ app.patch('/todos/:id', (req, res) => {
     }).catch((e) => {
         res.status(400).send({ 'error': error.message });
     })
+});
 
+app.post('/users', (req, res) => {
+    const body = _.pick(req.body, ['email', 'password'])
+    const user = new User(body);
+
+    // Model Methods - user Model (user.findByToken)
+    // Instance Methods - Individual user (user.generateAuthToken)
+
+    user.save().then(() => {
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth', token).send(user);
+    }).catch((error) => {
+        res.status(400).send({ 'error': error.message });
+    })
 });
 
 app.listen(port, () => {
