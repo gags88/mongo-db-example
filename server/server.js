@@ -37,12 +37,28 @@ app.get('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
-
-    const todo = Todo.findById(id).then((todo) => {
+    Todo.findById(id).then((todo) => {
         if (!todo) {
             return res.status(404).send();
         }
         res.send({ todo })
+    }, (error) => {
+        res.status(400).send({ 'error': error.message });
+    })
+})
+
+app.delete('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+    // 5affbb0c23dc5a050c0b8262
+    Todo.findByIdAndRemove(id).then((todo) => {
+        if (!todo) {
+            return res.status(404).send();
+        }
+        res.send({ todo, 'result': 'deleted' });
     }, (error) => {
         res.status(400).send({ 'error': error.message });
     })
