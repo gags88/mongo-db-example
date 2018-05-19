@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
@@ -30,8 +31,6 @@ app.get('/todos', (req, res) => {
     });
 })
 
-// Get Todo By Id
-
 app.get('/todos/:id', (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
@@ -53,7 +52,6 @@ app.delete('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
-    // 5affbb0c23dc5a050c0b8262
     Todo.findByIdAndRemove(id).then((todo) => {
         if (!todo) {
             return res.status(404).send();
@@ -62,7 +60,32 @@ app.delete('/todos/:id', (req, res) => {
     }, (error) => {
         res.status(400).send({ 'error': error.message });
     })
-})
+});
+
+app.patch('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    const body = _.pick(req.body, ['text', 'completed']);
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    if (_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed = false;
+        body.completedAt = null;
+    }
+
+    Todo.findByIdAndUpdate(id, { $set: body }, { new: true }).then((todo) => {
+        if (!todo) {
+            return res.status(404).send();
+        }
+        res.send({ todo, 'message': 'updated' })
+    }).catch((e) => {
+        res.status(400).send({ 'error': error.message });
+    })
+
+});
 
 app.listen(port, () => {
     console.log(`Started Listening on port ${port}`);
