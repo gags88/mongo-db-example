@@ -27,4 +27,4 @@ Todo.findById(id).then((todo) => {
     console.log(todo);
 }, (error) => {
     console.log(`Something went wrong: ${error.message}`);
-});
+}).catch(e => console.log(e));
